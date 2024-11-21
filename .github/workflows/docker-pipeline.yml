@@ -31,6 +31,12 @@ jobs:
     - name: Deploy Docker container on Linux VM
       run: |
         sshpass -p "${{ secrets.LINUX_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.LINUX_USER }}@${{ secrets.LINUX_HOST }} << EOF
+        sudo yum remove -y podman
+        sudo yum install -y yum-utils
+        sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+        sudo yum install -y docker-ce docker-ce-cli containerd.io
+        sudo systemctl start docker
+        sudo systemctl enable docker
         docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
         docker pull abdulkyndryl/team-18-kc-hackathon:latest
         docker stop team-18-container || true
