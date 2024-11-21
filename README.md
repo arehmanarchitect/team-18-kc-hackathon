@@ -132,3 +132,31 @@ To deploy a specific version of the application:
 
 ## License
 This project is licensed under the MIT License. See the `LICENSE` file for more details.
+
+
+---
+## Errors and Solutions
+### podman issue on Redhat linux
+Red Hat Enterprise Linux 8 uses Podman as a default container runtime instead of Docker. Podman attempts to emulate Docker commands but might not handle authentication with Docker Hub seamlessly.
+#### Install Docker on the Red Hat VM
+Login manually to your vm and run the following commands
+``` 
+sudo yum remove -y podman
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y docker-ce docker-ce-cli containerd.io
+sudo systemctl start docker
+sudo systemctl enable docker
+```
+
+
+### Sudo permission issues on targeted Redhat machine
+In case the pipieline gives the errors about sudo permissions, please add the user
+- Add the SSH User to the docker Group
+   - This allows the SSH user to execute Docker commands without sudo.
+- Log in to the Red Hat VM manually:
+   ``` ssh <your_ssh_user>@<your_vm_fqdn_or_ip> ```
+- Add the SSH user to the docker group:
+   ``` sudo usermod -aG docker <your_ssh_user> ```
+- Log out and log back in to apply the group changes
+- In case of erro persists restart docker service
