@@ -25,7 +25,7 @@ jobs:
     - name: Push Docker image to Private Repo
       run: docker push abdulkyndryl/team-18-kc-hackathon:latest
     
-    - name: Install sshpass
+    - name: Install sshpass on VM
       run: sudo apt-get install -y sshpass
 
     - name: Deploy Docker container on Linux VM
