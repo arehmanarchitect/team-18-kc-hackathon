@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hackathon-1124-ngnx
+spec:
+  rules:
+    - host: consultss.com
+      http:
+        paths:
+          - path: /
+            pathType: Exact
+            backend:
+              service:
+                name:  hackathon-1124-ngnx
+                port:
+                  number: 80

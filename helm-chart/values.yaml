@@ -1,0 +1,47 @@
+replicaCount: 3
+
+image:
+  repository: abdulkyndryl/team-18-kc-hackathon
+  tag: latest
+
+containerPort: 80
+
+resources:
+  requests:
+    cpu: "200m"
+    memory: "300Mi"
+  limits:
+    memory: "400Mi"
+
+env:
+  ENV: "EC2"
+
+imagePullSecrets: dockerhub-secret
+
+service:
+  type: NodePort           # Service type, e.g., ClusterIP, NodePort, LoadBalancer
+  port: 80                 # Port exposed by the service
+  targetPort: 80           # Target container port
+  nodePort: 30080          # NodePort (used only if service.type is NodePort)
+
+ingress:
+  enabled: true                     # Set to true to enable Ingress
+  class: nginx                      # Ingress class to use
+  host: consultss.com               # Hostname for the Ingress
+  path: /                           # Path for the Ingress
+  pathType: Exact                   # Path type for the Ingress
+
+service:
+  port: 80                          # Service port for backend
+
+
+serviceAccount:
+  create: true       # Whether to create a ServiceAccount
+  name: ""           # If empty, the ServiceAccount name will default to the release name
+
+autoscaling:
+  enabled: false                       # Set to true if you want to enable HPA
+  minReplicas: 1                       # Minimum number of replicas
+  maxReplicas: 3                       # Maximum number of replicas
+  targetCPUUtilizationPercentage: 70   # Target CPU utilization percentage (optional)
+  targetMemoryUtilizationPercentage: 60 # Target Memory utilization percentage (optional)
