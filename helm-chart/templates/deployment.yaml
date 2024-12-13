@@ -14,6 +14,10 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
+      imagePullSecrets:
+      {{- if .Values.imagePullSecrets }}
+      - name: {{ .Values.imagePullSecrets }}
+      {{- end }}
       containers:
       {{- range .Values.containers }}
       - name: {{ .name }}
@@ -26,6 +30,4 @@ spec:
             memory: {{ $.Values.resources.requests.memory }}
           limits:
             memory: {{ $.Values.resources.limits.memory }}
-      imagePullSecrets:
-      - name: {{ .Values.imagePullSecrets }}
       {{- end }}
