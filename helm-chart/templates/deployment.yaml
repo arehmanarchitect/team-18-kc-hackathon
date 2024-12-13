@@ -30,4 +30,12 @@ spec:
             memory: {{ $.Values.resources.requests.memory }}
           limits:
             memory: {{ $.Values.resources.limits.memory }}
+        env:
+        - name: NGINX_PORT
+          value: "{{ .port }}"
+        command:
+        - /bin/sh
+        - -c
+        - |
+          sed -i "s/listen 80;/listen ${NGINX_PORT};/" /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'
       {{- end }}
