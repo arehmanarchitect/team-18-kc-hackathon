@@ -85,7 +85,7 @@ jobs:
     #   id: build-image
     #   env:
     #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-    #     ECR_REPOSITORY: sift-layout
+    #     ECR_REPOSITORY: ackathon-1124-be
     #     IMAGE_TAG: ${{ github.sha }}
     #   run: |
     #     # Build a docker container and
@@ -98,10 +98,10 @@ jobs:
     #     cd ..
 
     # - name: Update the lambda function
-    #   id: update-sift-layout-lambda
+    #   id: update-ackathon-1124-be-lambda
     #   env:
     #     IMAGE_URI: ${{ steps.build-image.outputs.image }}
     #     # IMAGE_URI: 434172643681.dkr.ecr.us-east-2.amazonaws.com/layout:latest
     #   run: 
-    #     aws lambda update-function-code --function-name arn:aws:lambda:us-east-2:008971678057:function:sift-layout --image-uri $IMAGE_URI --region $AWS_REGION
+    #     aws lambda update-function-code --function-name arn:aws:lambda:us-east-2:008971678057:function:hackathon-1124-be --image-uri $IMAGE_URI --region $AWS_REGION
   
