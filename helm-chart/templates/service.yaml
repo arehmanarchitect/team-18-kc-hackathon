@@ -1,13 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-ngnx
+  name: {{ .Release.Name }}
 spec:
   selector:
-    app: {{ .Release.Name }}-ngnx
+    app: {{ .Release.Name }}
   ports:
-    - protocol: TCP
-      port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.targetPort }}
-      nodePort: {{ .Values.service.nodePort }}
+  {{- range .Values.service.ports }}
+  - name: {{ .name }}
+    port: {{ .port }}
+    targetPort: {{ .targetPort }}
+    nodePort: {{ .nodePort }}
+  {{- end }}
   type: {{ .Values.service.type }}

@@ -1,32 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-ngnx
+  name: {{ .Release.Name }}
   labels:
-    app: {{ .Release.Name }}-ngnx
+    app: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-ngnx
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-ngnx
+        app: {{ .Release.Name }}
     spec:
       containers:
-      - name: {{ .Release.Name }}-ngnx
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+      {{- range .Values.containers }}
+      - name: {{ .name }}
+        image: "{{ .image.repository }}:{{ .image.tag }}"
         ports:
-        - containerPort: {{ .Values.containerPort }}
+        - containerPort: {{ .port }}
         resources:
           requests:
-            cpu: {{ .Values.resources.requests.cpu }}
-            memory: {{ .Values.resources.requests.memory }}
+            cpu: {{ $.Values.resources.requests.cpu }}
+            memory: {{ $.Values.resources.requests.memory }}
           limits:
-            memory: {{ .Values.resources.limits.memory }}
-        env:
-          - name: ENV
-            value: "{{ .Values.env.ENV }}"
-      imagePullSecrets:
-      - name: {{ .Values.imagePullSecrets }}
+            memory: {{ $.Values.resources.limits.memory }}
+      {{- end }}

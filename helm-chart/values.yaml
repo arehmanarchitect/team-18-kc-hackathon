@@ -1,10 +1,16 @@
 replicaCount: 3
 
-image:
-  repository: abdulkyndryl/team-18-kc-hackathon
-  tag: latest
-
-containerPort: 80
+containers:
+  - name: app1
+    image:
+      repository: abdulkyndryl/team-18-kc-hackathon
+      tag: latest
+    port: 80
+  - name: app2
+    image:
+      repository: abdulkyndryl/team-18-kc-hackathon
+      tag: 202411221016
+    port: 8080
 
 resources:
   requests:
@@ -13,26 +19,32 @@ resources:
   limits:
     memory: "400Mi"
 
-env:
-  ENV: "EC2"
-
 imagePullSecrets: dockerhub-secret
 
 service:
-  type: NodePort           # Service type, e.g., ClusterIP, NodePort, LoadBalancer
-  port: 80                 # Port exposed by the service
-  targetPort: 80           # Target container port
-  nodePort: 30080          # NodePort (used only if service.type is NodePort)
+  type: NodePort
+  ports:
+    - name: app1
+      port: 80
+      targetPort: 80
+      nodePort: 30081
+    - name: app2
+      port: 8080
+      targetPort: 8080
+      nodePort: 30082
 
 ingress:
-  enabled: true                     # Set to true to enable Ingress
-  class: nginx                      # Ingress class to use
-  host: consultss.com               # Hostname for the Ingress
-  path: /                           # Path for the Ingress
-  pathType: Exact                   # Path type for the Ingress
-
-service:
-  port: 80                          # Service port for backend
+  enabled: true
+  class: nginx
+  paths:
+    - host: consultss.com
+      path: /app1
+      pathType: Prefix
+      servicePort: 80
+    - host: consultss.com
+      path: /app2
+      pathType: Prefix
+      servicePort: 8080
 
 
 serviceAccount:
