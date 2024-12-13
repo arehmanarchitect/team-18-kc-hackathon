@@ -26,4 +26,6 @@ spec:
             memory: {{ $.Values.resources.requests.memory }}
           limits:
             memory: {{ $.Values.resources.limits.memory }}
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecrets }}
       {{- end }}
