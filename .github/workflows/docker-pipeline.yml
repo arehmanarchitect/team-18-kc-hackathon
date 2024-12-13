@@ -18,7 +18,7 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        
+
     # Sonarqube server integration    
     # - uses: actions/checkout@v2
     #   with:
@@ -45,14 +45,63 @@ jobs:
     - name: Install sshpass on VM
       run: sudo apt-get install -y sshpass
 
-    # - name: Deploy Docker container on Linux VM
-    #   run: |
-    #     sshpass -p "${{ secrets.LINUX_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.LINUX_USER }}@${{ secrets.LINUX_HOST }} << EOF
-    #     docker login --username ${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
-    #     docker pull abdulkyndryl/team-18-kc-hackathon:latest
-    #     docker stop team-18-container || true
-    #     docker rm team-18-container || true
-    #     docker run -d -p 80:80 --name team-18-container abdulkyndryl/team-18-kc-hackathon:latest
-    #     EOF
+
+    # - name: Configure AWS credentials
+    #   uses: aws-actions/configure-aws-credentials@v1
+    #   with:
+    #     aws-access-key-id: ${{ secrets.STAGE_AWS_ACCESS_KEY_ID }}
+    #     aws-secret-access-key: ${{ secrets.STAGE_AWS_SECRET_ACCESS_KEY }}
+    #     # aws-session-token: ${{ secrets.STAGE_AWS_SESSION_TOKEN }}
+    #     aws-region: ${{ env.AWS_REGION }}
+        
+    # Sonarqube server integration    
+    # - uses: actions/checkout@v2
+    #   with:
+    #     fetch-depth: 0
+    # - name: Sonarqube Integration & Excution
+    #   uses: sonarsource/sonarqube-scan-action@master
     #   env:
-    #     SSHPASS: ${{ secrets.LINUX_PASSWORD }}
+    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+     # If you wish to fail your job when the Quality Gate is red, uncomment the
+     # following lines. This would typically be used to fail a deployment.
+    # - name: Sonarqube Quality Gate Enabled
+    #   uses: sonarsource/sonarqube-quality-gate-action@master
+    #   timeout-minutes: 5
+    #   env:
+    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+    # - name: Set up QEMU
+    #   uses: docker/setup-qemu-action@v2
+
+    # - name: Set up Docker Buildx
+    #   uses: docker/setup-buildx-action@v2
+
+    # - name: Login to Amazon ECR
+    #   id: login-ecr
+    #   uses: aws-actions/amazon-ecr-login@v1
+
+    # - name: Build, tag, and push image to Amazon ECR
+    #   id: build-image
+    #   env:
+    #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    #     ECR_REPOSITORY: sift-layout
+    #     IMAGE_TAG: ${{ github.sha }}
+    #   run: |
+    #     # Build a docker container and
+    #     # push it to ECR so that it can
+    #     # be deployed to ECS.
+    #     cd docker_image
+    #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest --build-arg branch=master .
+    #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+    #     echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
+    #     cd ..
+
+    # - name: Update the lambda function
+    #   id: update-sift-layout-lambda
+    #   env:
+    #     IMAGE_URI: ${{ steps.build-image.outputs.image }}
+    #     # IMAGE_URI: 434172643681.dkr.ecr.us-east-2.amazonaws.com/layout:latest
+    #   run: 
+    #     aws lambda update-function-code --function-name arn:aws:lambda:us-east-2:008971678057:function:sift-layout --image-uri $IMAGE_URI --region $AWS_REGION
+  
