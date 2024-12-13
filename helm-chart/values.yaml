@@ -9,7 +9,7 @@ containers:
   - name: app2
     image:
       repository: abdulkyndryl/team-18-kc-hackathon
-      tag: 202411221016
+      tag: latest
     port: 8080
 
 resources:
